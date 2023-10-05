@@ -35,18 +35,17 @@ class UserController extends Controller
     public function show(string $id, Request $request)
     {
         $value = $request->header('User-Id', 0);
+        $data = [
+            'status' => 500,
+            'error' => 'INTERNAL_ERROR'
+        ];
         if (empty($value)) {
-            return response($value);
+            return response()->json($data, 500);
         } else {
             if ($value == $id) {
                 return User::findOrFail($id);
             } else {
-                $data = [
-                    'status' => 500,
-                    'error' => 'INTERNAL_ERROR'
-                ];
                 return response()->json($data, 500);
-
             }
 
         }
@@ -58,17 +57,17 @@ class UserController extends Controller
     public function update(UserStoreRequest $request, User $user)
     {
         $value = $request->header('User-Id', 0);
+        $data = [
+            'status' => 500,
+            'error' => 'INTERNAL_ERROR'
+        ];
         if (empty($value)) {
-            return response(null);
+            return response()->json($data, 500);
         } else {
             if ($value == $user['id']) {
                 $user->update($request->validated());
                 return new  UserResource($user);
             } else {
-                $data = [
-                    'status' => 500,
-                    'error' => 'INTERNAL_ERROR'
-                ];
                 return response()->json($data, 500);
             }
 
@@ -81,6 +80,7 @@ class UserController extends Controller
     public function destroy(User $user, Request $request)
     {
         $value = $request->header('User-Id', 0);
+
         if (empty($value)) {
             $data = [
                 'status' => 500,
@@ -92,7 +92,7 @@ class UserController extends Controller
             $data = [
                 'msg' => 'success'
             ];
-            return response()->json($data, 200);
+            return response()->json($data);
         }
     }
 }
