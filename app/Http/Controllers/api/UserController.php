@@ -9,6 +9,7 @@ use App\Models\User;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use function Laravel\Prompts\error;
 
 class UserController extends Controller
 {
@@ -31,15 +32,21 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, Request $request)
     {
-        if (empty($_GET['User-Id'])) {
-            return response(null);
+        $value = $request->header('User-Id', 0);
+        if (empty($value)) {
+            return response($value);
         } else {
-            if ($_GET['User-Id'] == $id) {
+            if ($value == $id) {
                 return User::findOrFail($id);
             } else {
-                return response('error');
+                $data = [
+                    'status' => 500,
+                    'error' => 'INTERNAL_ERROR'
+                ];
+                return response()->json($data, 500);
+
             }
 
         }
@@ -50,30 +57,42 @@ class UserController extends Controller
      */
     public function update(UserStoreRequest $request, User $user)
     {
-          if (empty($_GET['User-Id'])) {
-              return response(null);
-          } else {
-              if ($_GET['User-Id']=$user['id']){
-                  $user->update($request->validated());
-                  return new  UserResource($user);
-              }
-              else{
-                  return response('error');
-              }
+        $value = $request->header('User-Id', 0);
+        if (empty($value)) {
+            return response(null);
+        } else {
+            if ($value == $user['id']) {
+                $user->update($request->validated());
+                return new  UserResource($user);
+            } else {
+                $data = [
+                    'status' => 500,
+                    'error' => 'INTERNAL_ERROR'
+                ];
+                return response()->json($data, 500);
+            }
 
-          }
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $user, Request $request)
     {
-        if (empty($_GET['User-Id'])) {
-            return response(null);
+        $value = $request->header('User-Id', 0);
+        if (empty($value)) {
+            $data = [
+                'status' => 500,
+                'error' => 'INTERNAL_ERROR'
+            ];
+            return response()->json($data, 500);
         } else {
             $user->delete();
-            return response(null);
+            $data = [
+                'msg' => 'success'
+            ];
+            return response()->json($data, 200);
         }
     }
 }
