@@ -33,7 +33,16 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        return User::findOrFail($id);
+        if (empty($_GET['User-Id'])) {
+            return response(null);
+        } else {
+            if ($_GET['User-Id'] == $id) {
+                return User::findOrFail($id);
+            } else {
+                return response('error');
+            }
+
+        }
     }
 
     /**
@@ -41,8 +50,18 @@ class UserController extends Controller
      */
     public function update(UserStoreRequest $request, User $user)
     {
-        $user->update($request->validated());
-        return new  UserResource($user);
+          if (empty($_GET['User-Id'])) {
+              return response(null);
+          } else {
+              if ($_GET['User-Id']=$user['id']){
+                  $user->update($request->validated());
+                  return new  UserResource($user);
+              }
+              else{
+                  return response('error');
+              }
+
+          }
     }
 
     /**
@@ -50,7 +69,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
-        return response(null);
+        if (empty($_GET['User-Id'])) {
+            return response(null);
+        } else {
+            $user->delete();
+            return response(null);
+        }
     }
 }
