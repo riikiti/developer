@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FavoritesStoreRequest;
+use App\Http\Resources\FavoritesResource;
+use App\Models\Favorites;
 use Illuminate\Http\Request;
 
 class FavoritesController extends Controller
@@ -18,10 +21,32 @@ class FavoritesController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(FavoritesStoreRequest $request)
     {
-        //
+
+        $value = $request->header('User-Id', 0);
+
+        if (empty($value)) {
+            $data = [
+                'status' => 401,
+                'error' => 'Unauthorized'
+            ];
+            return response()->json($data, 401);
+        } else {
+            if ($value == $request['user_id']) {
+                return Favorites::create($request->validated());
+            } else {
+                $data = [
+                    'status' => 403,
+                    'error' => 'Forbidden'
+                ];
+                return response()->json($data, 403);
+            }
+
+        }
     }
+
+
 
     /**
      * Display the specified resource.

@@ -3,13 +3,21 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\MovieResource;
+use App\Models\Movie;
 use Illuminate\Http\Request;
 
 class MovieController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+       $per_page = $request->query('per_page');
+        if (empty ($per_page)) {
+            $per_page = 10;
+        }
         //pagintion
+        return MovieResource::collection(Movie::paginate($per_page));
+
     }
 
     /**
@@ -17,7 +25,11 @@ class MovieController extends Controller
      */
     public function store(Request $request)
     {
-        // parse
+        $data = [
+            'status' => 500,
+            'error' => 'INTERNAL_ERROR'
+        ];
+        return response()->json($data, 500);
     }
 
     /**
@@ -25,7 +37,7 @@ class MovieController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return Movie::findOrFail($id);
     }
 
     /**
@@ -33,7 +45,11 @@ class MovieController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //ne bydet
+        $data = [
+            'status' => 500,
+            'error' => 'INTERNAL_ERROR'
+        ];
+        return response()->json($data, 500);
     }
 
     /**
@@ -41,6 +57,10 @@ class MovieController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $data = [
+            'status' => 500,
+            'error' => 'INTERNAL_ERROR'
+        ];
+        return response()->json($data, 500);
     }
 }
