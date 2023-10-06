@@ -35,17 +35,22 @@ class UserController extends Controller
     public function show(string $id, Request $request)
     {
         $value = $request->header('User-Id', 0);
-        $data = [
-            'status' => 500,
-            'error' => 'INTERNAL_ERROR'
-        ];
+
         if (empty($value)) {
-            return response()->json($data, 500);
+            $data = [
+                'status' => 401,
+                'error' => 'Unauthorized'
+            ];
+            return response()->json($data, 401);
         } else {
             if ($value == $id) {
                 return User::findOrFail($id);
             } else {
-                return response()->json($data, 500);
+                $data = [
+                    'status' => 403,
+                    'error' => 'Forbidden'
+                ];
+                return response()->json($data, 403);
             }
 
         }
@@ -57,18 +62,22 @@ class UserController extends Controller
     public function update(UserStoreRequest $request, User $user)
     {
         $value = $request->header('User-Id', 0);
-        $data = [
-            'status' => 500,
-            'error' => 'INTERNAL_ERROR'
-        ];
         if (empty($value)) {
-            return response()->json($data, 500);
+            $data = [
+                'status' => 401,
+                'error' => 'Unauthorized'
+            ];
+            return response()->json($data, 401);
         } else {
             if ($value == $user['id']) {
                 $user->update($request->validated());
                 return new  UserResource($user);
             } else {
-                return response()->json($data, 500);
+                $data = [
+                    'status' => 403,
+                    'error' => 'Forbidden'
+                ];
+                return response()->json($data, 403);
             }
 
         }
@@ -80,19 +89,27 @@ class UserController extends Controller
     public function destroy(User $user, Request $request)
     {
         $value = $request->header('User-Id', 0);
-
         if (empty($value)) {
             $data = [
-                'status' => 500,
-                'error' => 'INTERNAL_ERROR'
+                'status' => 401,
+                'error' => 'Unauthorized'
             ];
-            return response()->json($data, 500);
+            return response()->json($data, 401);
         } else {
-            $user->delete();
-            $data = [
-                'msg' => 'success'
-            ];
-            return response()->json($data);
+            if ($value == $user['id']) {
+                $user->delete();
+                $data = [
+                    'status' => 200,
+                    'msg' => 'success'
+                ];
+                return response()->json($data);
+            } else {
+                $data = [
+                    'status' => 403,
+                    'error' => 'Forbidden'
+                ];
+                return response()->json($data, 403);
+            }
         }
     }
 }
