@@ -27,7 +27,7 @@ class FavoritesController extends Controller
         $existingRecord = Favorites::where('user_id', $value)
             ->where('movie_id', $request->input('movie_id'))
             ->first();
-        if (empty($existingRecord)){
+        if (empty($existingRecord)) {
             if (empty($value)) {
                 $data = [
                     'status' => 401,
@@ -35,14 +35,13 @@ class FavoritesController extends Controller
                 ];
                 return response()->json($data, 401);
             } else {
-                $favorites=new Favorites;
-                $favorites->user_id=$value;
-                $favorites->movie_id=$request->movie_id;
+                $favorites = new Favorites;
+                $favorites->user_id = $value;
+                $favorites->movie_id = $request->movie_id;
                 $favorites->save();
                 return response()->json($favorites, 200);
             }
-        }
-        else{
+        } else {
             $data = [
                 'status' => 409,
                 'error' => 'Conflict'
@@ -57,7 +56,11 @@ class FavoritesController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $data = [
+            'status' => 501,
+            'error' => 'Not Implemented'
+        ];
+        return response()->json($data, 501);
     }
 
     /**
@@ -65,15 +68,63 @@ class FavoritesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //ne bydet
+        $data = [
+            'status' => 501,
+            'error' => 'Not Implemented'
+        ];
+        return response()->json($data, 501);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id, Request $request)
     {
-        //
+        $favorites =   Favorites::find($id);
+        $value = $request->header('User-Id');
+
+        if (empty($favorites)) {
+            $data = [
+                'status' => 404,
+                'error' => 'Not Found'
+            ];
+            return response()->json($data, 404);
+        }
+
+        if (empty($value)) {
+            $data = [
+                'status' => 401,
+                'error' => 'Unauthorized'
+            ];
+            return response()->json($data, 401);
+        } else {
+            if ($value == $favorites['user_id']) {
+                $favorites->delete();
+                $data = [
+                    'status' => 200,
+                    'msg' => 'success'
+                ];
+                return response()->json($data);
+            } else {
+                $data = [
+                    'status' => 403,
+                    'error' => 'Forbidden',
+                ];
+                return response()->json($data, 403);
+            }
+        }
     }
+
 }
-//todo сделать 2 invoke контроллера которые будут выводить из памяти и из кеша по разным эндпоинтам
+//todo сделать вывод добавленных в избранное у пользователя и не добавденных у пользователся двумя эндпоинтами(invoke controller), не избраные берутся из кеша и из запроса
+
+/*
+  $record = Favorites::find($request->query());
+        if (empty($record)) {
+            $data = [
+                'status' => 404,
+                'error' => 'Not Found'
+            ];
+            return response()->json($data, 404);
+        }
+ * */
