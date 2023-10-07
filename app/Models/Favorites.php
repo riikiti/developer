@@ -15,7 +15,7 @@ class Favorites extends Model
         'movie_id',
     ];
 
-    public function users(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

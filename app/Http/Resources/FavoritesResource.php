@@ -16,7 +16,7 @@ class FavoritesResource extends JsonResource
     {
         return [
             'id'=>$this->id,
-            'user'=> new UserResource($this->users),
+            'user'=> new UserResource($this->user),
             'movie'=>new MovieResource($this->movie),
 
         ];

@@ -15,7 +15,7 @@ class FavoritesController extends Controller
      */
     public function index()
     {
-        //
+        return FavoritesResource::collection(Favorites::all());
     }
 
     /**
@@ -23,29 +23,33 @@ class FavoritesController extends Controller
      */
     public function store(FavoritesStoreRequest $request)
     {
-
-        $value = $request->header('User-Id', 0);
-
-        if (empty($value)) {
-            $data = [
-                'status' => 401,
-                'error' => 'Unauthorized'
-            ];
-            return response()->json($data, 401);
-        } else {
-            if ($value == $request['user_id']) {
-                return Favorites::create($request->validated());
-            } else {
+        $value = $request->header('User-Id');
+        $existingRecord = Favorites::where('user_id', $value)
+            ->where('movie_id', $request->input('movie_id'))
+            ->first();
+        if (empty($existingRecord)){
+            if (empty($value)) {
                 $data = [
-                    'status' => 403,
-                    'error' => 'Forbidden'
+                    'status' => 401,
+                    'error' => 'Unauthorized'
                 ];
-                return response()->json($data, 403);
+                return response()->json($data, 401);
+            } else {
+                $favorites=new Favorites;
+                $favorites->user_id=$value;
+                $favorites->movie_id=$request->movie_id;
+                $favorites->save();
+                return response()->json($favorites, 200);
             }
-
+        }
+        else{
+            $data = [
+                'status' => 409,
+                'error' => 'Conflict'
+            ];
+            return response()->json($data, 409);
         }
     }
-
 
 
     /**

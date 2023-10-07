@@ -22,7 +22,8 @@ class FavoritesStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_id'=>'nullable',
+            'movie_id' => 'required',
         ];
     }
 }
