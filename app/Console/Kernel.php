@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('fetch:movies')->everyThreeHours();
-        //$schedule->command('fetch:movies')->everyMinute();
+        // $schedule->command('fetch:movies')->everyMinute();
     }
 
     /**

@@ -25,7 +25,7 @@ class CollectMovies extends Command
         $pages = 3;
 
         for ($page = 1; $page <= $pages; $page++) {
-            $response = $client->get("https://the-one-api.dev/v2/movie?page=$page"); // Replace this URL with actual API URL
+            $response = $client->get("https://the-one-api.dev/v2/movie?page=$page");
             $data = json_decode($response->getBody(), true)['docs'];
 
             foreach ($data as $movie) {

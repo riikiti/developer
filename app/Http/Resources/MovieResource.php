@@ -18,7 +18,6 @@ class MovieResource extends JsonResource
             'id'=>$this->id,
             'name'=>$this->name,
             'budgetInMillions'=>$this->budgetInMillions,
-
         ];
     }
 }

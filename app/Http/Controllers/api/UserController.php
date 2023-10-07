@@ -34,25 +34,33 @@ class UserController extends Controller
      */
     public function show(string $id, Request $request)
     {
-        $value = $request->header('User-Id', 0);
-
-        if (empty($value)) {
+        $user = User::find($id);
+        if (empty($user)) {
             $data = [
-                'status' => 401,
-                'error' => 'Unauthorized'
+                'status' => 404,
+                'error' => 'Not Found'
             ];
-            return response()->json($data, 401);
+            return response()->json($data, 404);
         } else {
-            if ($value == $id) {
-                return User::findOrFail($id);
-            } else {
+            $value = $request->header('User-Id');
+            if (empty($value)) {
                 $data = [
-                    'status' => 403,
-                    'error' => 'Forbidden'
+                    'status' => 401,
+                    'error' => 'Unauthorized'
                 ];
-                return response()->json($data, 403);
-            }
+                return response()->json($data, 401);
+            } else {
+                if ($value == $id) {
+                    return new UserResource($user);
+                } else {
+                    $data = [
+                        'status' => 403,
+                        'error' => 'Forbidden'
+                    ];
+                    return response()->json($data, 403);
+                }
 
+            }
         }
     }
 
@@ -61,7 +69,7 @@ class UserController extends Controller
      */
     public function update(UserStoreRequest $request, User $user)
     {
-        $value = $request->header('User-Id', 0);
+        $value = $request->header('User-Id');
         if (empty($value)) {
             $data = [
                 'status' => 401,
@@ -88,7 +96,7 @@ class UserController extends Controller
      */
     public function destroy(User $user, Request $request)
     {
-        $value = $request->header('User-Id', 0);
+        $value = $request->header('User-Id');
         if (empty($value)) {
             $data = [
                 'status' => 401,

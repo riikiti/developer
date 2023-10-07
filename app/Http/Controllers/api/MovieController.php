@@ -11,13 +11,11 @@ class MovieController extends Controller
 {
     public function index(Request $request)
     {
-       $per_page = $request->query('per_page');
+        $per_page = $request->query('per_page');
         if (empty ($per_page)) {
             $per_page = 10;
         }
-        //pagintion
         return MovieResource::collection(Movie::paginate($per_page));
-
     }
 
     /**
@@ -26,10 +24,10 @@ class MovieController extends Controller
     public function store(Request $request)
     {
         $data = [
-            'status' => 500,
-            'error' => 'INTERNAL_ERROR'
+            'status' => 501,
+            'error' => 'Not Implemented'
         ];
-        return response()->json($data, 500);
+        return response()->json($data, 501);
     }
 
     /**
@@ -37,7 +35,17 @@ class MovieController extends Controller
      */
     public function show(string $id)
     {
-        return Movie::findOrFail($id);
+        $movie = Movie::find($id);
+        if (empty($movie)) {
+            $data = [
+                'status' => 404,
+                'error' => 'Not Found'
+            ];
+            return response()->json($data, 404);
+        } else {
+            return new MovieResource($movie);
+        }
+
     }
 
     /**
@@ -46,10 +54,10 @@ class MovieController extends Controller
     public function update(Request $request, string $id)
     {
         $data = [
-            'status' => 500,
-            'error' => 'INTERNAL_ERROR'
+            'status' => 501,
+            'error' => 'Not Implemented'
         ];
-        return response()->json($data, 500);
+        return response()->json($data, 501);
     }
 
     /**
@@ -58,9 +66,9 @@ class MovieController extends Controller
     public function destroy(string $id)
     {
         $data = [
-            'status' => 500,
-            'error' => 'INTERNAL_ERROR'
+            'status' => 501,
+            'error' => 'Not Implemented'
         ];
-        return response()->json($data, 500);
+        return response()->json($data, 501);
     }
 }
