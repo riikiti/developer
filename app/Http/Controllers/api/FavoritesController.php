@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\FavoritesStoreRequest;
 use App\Http\Resources\FavoritesResource;
 use App\Models\Favorites;
+use App\Models\Movie;
 use Illuminate\Http\Request;
 
 class FavoritesController extends Controller
@@ -34,7 +35,15 @@ class FavoritesController extends Controller
                     'error' => 'Unauthorized'
                 ];
                 return response()->json($data, 401);
-            } else {
+            }
+            if(!Movie::find($request->movie_id)){
+                $data = [
+                    'status' => 404,
+                    'error' => 'Not Found'
+                ];
+                return response()->json($data, 404);
+            }
+            else {
                 $favorites = new Favorites;
                 $favorites->user_id = $value;
                 $favorites->movie_id = $request->movie_id;
