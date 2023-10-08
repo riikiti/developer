@@ -18,7 +18,16 @@ class UserController extends Controller
      */
     public function index()
     {
-        return UserResource::collection(User::all());
+        try {
+            return UserResource::collection(User::all());
+        }catch (\Exception $exception){
+            $data = [
+                'status' => 500,
+                'error' => 'Internal Server Error'
+            ];
+            return response()->json($data, 500);
+        }
+
     }
 
     /**
@@ -26,7 +35,15 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
-        return User::create($request->validated());
+        try {
+            return User::create($request->validated());
+        }catch (\Exception $exception){
+            $data = [
+                'status' => 500,
+                'error' => 'Internal Server Error. User already created'
+            ];
+            return response()->json($data, 500);
+        }
     }
 
     /**
@@ -34,14 +51,52 @@ class UserController extends Controller
      */
     public function show(string $id, Request $request)
     {
-        $user = User::find($id);
-        if (empty($user)) {
+        try {
+            $user = User::find($id);
+            if (empty($user)) {
+                $data = [
+                    'status' => 404,
+                    'error' => 'Not Found'
+                ];
+                return response()->json($data, 404);
+            } else {
+                $value = $request->header('User-Id');
+                if (empty($value)) {
+                    $data = [
+                        'status' => 401,
+                        'error' => 'Unauthorized'
+                    ];
+                    return response()->json($data, 401);
+                } else {
+                    if ($value == $id) {
+                        return new UserResource($user);
+                    } else {
+                        $data = [
+                            'status' => 403,
+                            'error' => 'Forbidden'
+                        ];
+                        return response()->json($data, 403);
+                    }
+
+                }
+            }
+        }catch (\Exception $exception){
             $data = [
-                'status' => 404,
-                'error' => 'Not Found'
+                'status' => 500,
+                'error' => 'Internal Server Error'
             ];
-            return response()->json($data, 404);
-        } else {
+            return response()->json($data, 500);
+        }
+
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(UserStoreRequest $request, User $user)
+    {
+
+        try {
             $value = $request->header('User-Id');
             if (empty($value)) {
                 $data = [
@@ -50,8 +105,9 @@ class UserController extends Controller
                 ];
                 return response()->json($data, 401);
             } else {
-                if ($value == $id) {
-                    return new UserResource($user);
+                if ($value == $user['id']) {
+                    $user->update($request->validated());
+                    return new  UserResource($user);
                 } else {
                     $data = [
                         'status' => 403,
@@ -61,34 +117,15 @@ class UserController extends Controller
                 }
 
             }
-        }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UserStoreRequest $request, User $user)
-    {
-        $value = $request->header('User-Id');
-        if (empty($value)) {
+        }catch (\Exception $exception){
             $data = [
-                'status' => 401,
-                'error' => 'Unauthorized'
+                'status' => 500,
+                'error' => 'Internal Server Error'
             ];
-            return response()->json($data, 401);
-        } else {
-            if ($value == $user['id']) {
-                $user->update($request->validated());
-                return new  UserResource($user);
-            } else {
-                $data = [
-                    'status' => 403,
-                    'error' => 'Forbidden'
-                ];
-                return response()->json($data, 403);
-            }
-
+            return response()->json($data, 500);
         }
+
+
     }
 
     /**
@@ -96,38 +133,49 @@ class UserController extends Controller
      */
     public function destroy($id, Request $request)
     {
-        $user =   User::find($id);
-        $value = $request->header('User-Id');
 
-        if (empty($user)) {
-            $data = [
-                'status' => 404,
-                'error' => 'Not Found'
-            ];
-            return response()->json($data, 404);
-        }
+        try {
+            $user =   User::find($id);
+            $value = $request->header('User-Id');
 
-        if (empty($value)) {
-            $data = [
-                'status' => 401,
-                'error' => 'Unauthorized'
-            ];
-            return response()->json($data, 401);
-        } else {
-            if ($value == $user['id']) {
-                $user->delete();
+            if (empty($user)) {
                 $data = [
-                    'status' => 200,
-                    'msg' => 'success'
+                    'status' => 404,
+                    'error' => 'Not Found'
                 ];
-                return response()->json($data);
-            } else {
-                $data = [
-                    'status' => 403,
-                    'error' => 'Forbidden'
-                ];
-                return response()->json($data, 403);
+                return response()->json($data, 404);
             }
+
+            if (empty($value)) {
+                $data = [
+                    'status' => 401,
+                    'error' => 'Unauthorized'
+                ];
+                return response()->json($data, 401);
+            } else {
+                if ($value == $user['id']) {
+                    $user->delete();
+                    $data = [
+                        'status' => 200,
+                        'msg' => 'success'
+                    ];
+                    return response()->json($data);
+                } else {
+                    $data = [
+                        'status' => 403,
+                        'error' => 'Forbidden'
+                    ];
+                    return response()->json($data, 403);
+                }
+            }
+        }catch (\Exception $exception){
+            $data = [
+                'status' => 500,
+                'error' => 'Internal Server Error'
+            ];
+            return response()->json($data, 500);
         }
+
+
     }
 }

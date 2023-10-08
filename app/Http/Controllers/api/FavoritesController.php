@@ -125,15 +125,3 @@ class FavoritesController extends Controller
     }
 
 }
-//todo сделать вывод добавленных в избранное у пользователя и не добавденных у пользователся двумя эндпоинтами(invoke controller), не избраные берутся из кеша и из запроса
-
-/*
-  $record = Favorites::find($request->query());
-        if (empty($record)) {
-            $data = [
-                'status' => 404,
-                'error' => 'Not Found'
-            ];
-            return response()->json($data, 404);
-        }
- * */
