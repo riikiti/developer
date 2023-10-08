@@ -11,11 +11,22 @@ class MovieController extends Controller
 {
     public function index(Request $request)
     {
-        $per_page = $request->query('per_page');
-        if (empty ($per_page)) {
-            $per_page = 10;
+        try {
+            $per_page = $request->query('per_page');
+            if (empty ($per_page)) {
+                $per_page = 10;
+            }
+            return MovieResource::collection(Movie::paginate($per_page));
+        }catch (\Exception $exception){
+            $data = [
+                'status' => 500,
+                'error' => 'Internal Server Error'
+            ];
+            return response()->json($data, 500);
         }
-        return MovieResource::collection(Movie::paginate($per_page));
+
+
+
     }
 
     /**
@@ -35,17 +46,24 @@ class MovieController extends Controller
      */
     public function show(string $id)
     {
-        $movie = Movie::find($id);
-        if (empty($movie)) {
+        try {
+            $movie = Movie::find($id);
+            if (empty($movie)) {
+                $data = [
+                    'status' => 404,
+                    'error' => 'Not Found'
+                ];
+                return response()->json($data, 404);
+            } else {
+                return new MovieResource($movie);
+            }
+        }catch (\Exception $exception){
             $data = [
-                'status' => 404,
-                'error' => 'Not Found'
+                'status' => 500,
+                'error' => 'Internal Server Error'
             ];
-            return response()->json($data, 404);
-        } else {
-            return new MovieResource($movie);
+            return response()->json($data, 500);
         }
-
     }
 
     /**

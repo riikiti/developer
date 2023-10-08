@@ -18,7 +18,6 @@ class FavoritesResource extends JsonResource
             'id'=>$this->id,
             'user'=> new UserResource($this->user),
             'movie'=>new MovieResource($this->movie),
-
         ];
     }
 }
