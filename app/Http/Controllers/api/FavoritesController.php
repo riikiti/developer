@@ -16,15 +16,7 @@ class FavoritesController extends Controller
      */
     public function index()
     {
-        try {
-            return FavoritesResource::collection(Favorites::all());
-        }catch (\Exception $exception){
-            $data = [
-                'status' => 500,
-                'error' => 'Internal Server Error'
-            ];
-            return response()->json($data, 500);
-        }
+        return FavoritesResource::collection(Favorites::all());
     }
 
     /**
@@ -81,11 +73,7 @@ class FavoritesController extends Controller
      */
     public function show(string $id)
     {
-        $data = [
-            'status' => 501,
-            'error' => 'Not Implemented'
-        ];
-        return response()->json($data, 501);
+
     }
 
     /**
@@ -93,11 +81,7 @@ class FavoritesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $data = [
-            'status' => 501,
-            'error' => 'Not Implemented'
-        ];
-        return response()->json($data, 501);
+
     }
 
     /**

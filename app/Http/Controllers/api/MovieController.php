@@ -11,22 +11,11 @@ class MovieController extends Controller
 {
     public function index(Request $request)
     {
-        try {
             $per_page = $request->query('per_page');
             if (empty ($per_page)) {
                 $per_page = 10;
             }
             return MovieResource::collection(Movie::paginate($per_page));
-        }catch (\Exception $exception){
-            $data = [
-                'status' => 500,
-                'error' => 'Internal Server Error'
-            ];
-            return response()->json($data, 500);
-        }
-
-
-
     }
 
     /**
@@ -44,26 +33,9 @@ class MovieController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request)
     {
-        try {
-            $movie = Movie::find($id);
-            if (empty($movie)) {
-                $data = [
-                    'status' => 404,
-                    'error' => 'Not Found'
-                ];
-                return response()->json($data, 404);
-            } else {
-                return new MovieResource($movie);
-            }
-        }catch (\Exception $exception){
-            $data = [
-                'status' => 500,
-                'error' => 'Internal Server Error'
-            ];
-            return response()->json($data, 500);
-        }
+        return new MovieResource(Movie::find($request->route('movie')));
     }
 
     /**

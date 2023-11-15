@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\api\movie\MovieFound;
 use App\Http\Middleware\api\user\UserAutorization;
 use App\Http\Middleware\api\user\UserFound;
 use App\Http\Middleware\api\user\UserRule;
@@ -46,6 +47,8 @@ class Kernel extends HttpKernel
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+        'api/users' =>[
             'user-auth'=> UserAutorization::class,
         ],
     ];
@@ -71,5 +74,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'user-found'=> UserFound::class,
         'user-rule'=> UserRule::class,
+        'movie-found' =>MovieFound::class,
     ];
 }
