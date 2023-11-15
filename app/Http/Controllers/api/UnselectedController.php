@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\FavoritesResource;
-use App\Http\Resources\MovieResource;
-use App\Models\Favorites;
+use App\Services\Unselected\UnselectedService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -13,6 +11,10 @@ use Illuminate\Support\Facades\DB;
 
 class UnselectedController extends Controller
 {
+
+    public function __construct(public UnselectedService $unselectedService)
+    {
+    }
     public function __invoke(Request $request)
     {
 
@@ -28,28 +30,9 @@ class UnselectedController extends Controller
             } else {
                 switch ($loaderType) {
                     case "sql":
-                        $movies = DB::table('movies')
-                            ->select('movies.name', 'movies.budgetInMillions', 'movies.id')
-                            ->leftJoin('favorites', function ($join) use ($value) {
-                                $join->on('movies.id', '=', 'favorites.movie_id')
-                                    ->where('favorites.user_id', '=', $value);
-                            })
-                            ->whereNull('favorites.movie_id')
-                            ->get();
-                        return response()->json($movies);
+                        return $this->unselectedService->getFromSql($value);
                     case "inMemory":
-                        $movies = Cache::remember('all_movies', 60 * 60 * 24, function () {
-                            return DB::table('movies')->select('movies.name', 'movies.budgetInMillions', 'movies.id')->get();
-                        });
-                        $userFavorites = Cache::remember('user_favorites' . $value, 60 * 60 * 24, function () use ($value) {
-                            return DB::table('favorites')
-                                ->where('favorites.user_id', '=', $value)
-                                ->select('favorites.movie_id')
-                                ->get()
-                                ->pluck('movie_id');
-                        });
-                        $notFavoritedMovies = $movies->whereNotIn('id', $userFavorites);
-                        return response()->json($notFavoritedMovies);
+                        return $this->unselectedService->getFromMemory($value);
                     default:
                         $data = [
                             'status' => 501,
