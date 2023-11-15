@@ -2,14 +2,14 @@
 
 namespace App\Services\Unselected;
 
-use App\Service\Unselected\Unselected;
+
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class UnselectedService implements Unselected
 {
 
-    public function getFromSql($value)
+    public function getFromSql($value): \Illuminate\Http\JsonResponse
     {
         $movies = DB::table('movies')
             ->select('movies.name', 'movies.budgetInMillions', 'movies.id')
@@ -22,7 +22,7 @@ class UnselectedService implements Unselected
         return response()->json($movies);
     }
 
-    public function getFromMemory($value)
+    public function getFromMemory($value): \Illuminate\Http\JsonResponse
     {
         $movies = Cache::remember('all_movies', 60 * 60 * 24, function () {
             return DB::table('movies')->select('movies.name', 'movies.budgetInMillions', 'movies.id')->get();
