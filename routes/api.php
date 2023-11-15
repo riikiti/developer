@@ -27,5 +27,5 @@ Route::post('favorites', [FavoritesController::class, 'store']);
 Route::delete('favorites/{favorite}', [FavoritesController::class, 'destroy']);
 
 // UnselectedController
-Route::get('/unselected', UnselectedController::class);
+Route::get('/unselected', UnselectedController::class)->withoutMiddleware('user-auth');
 
