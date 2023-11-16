@@ -2,11 +2,16 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\api\favorite\FavoriteExist;
+use App\Http\Middleware\api\favorite\FavoriteFoundDestroy;
+use App\Http\Middleware\api\favorite\FavoriteFoundStore;
+use App\Http\Middleware\api\favorite\FavoriteRule;
 use App\Http\Middleware\api\movie\MovieFound;
 use App\Http\Middleware\api\user\UserAutorization;
 use App\Http\Middleware\api\user\UserFound;
 use App\Http\Middleware\api\user\UserRule;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+
 
 class Kernel extends HttpKernel
 {
@@ -45,12 +50,10 @@ class Kernel extends HttpKernel
 
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-            \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
+            \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
-        'api/users' =>[
-            'user-auth'=> UserAutorization::class,
-        ],
+
     ];
 
     /**
@@ -72,8 +75,12 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'user-found'=> UserFound::class,
-        'user-rule'=> UserRule::class,
-        'movie-found' =>MovieFound::class,
+        'user-found' => UserFound::class,
+        'user-rule' => UserRule::class,
+        'movie-found' => MovieFound::class,
+        'favorite-found-store' => FavoriteFoundStore::class,
+        'favorite-found-destroy' => FavoriteFoundDestroy::class,
+        'favorite-exist' => FavoriteExist::class,
+        'user-auth' => UserAutorization::class,
     ];
 }
