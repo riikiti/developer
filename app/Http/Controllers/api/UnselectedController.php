@@ -18,7 +18,6 @@ class UnselectedController extends Controller
 
     public function __invoke(Request $request)
     {
-        //todo написать middleware для пользователей которые не передали User-id
         match ($request->query('loaderType')){
             'sql'=> $result = $this->unselectedService->getFromSql($request->header('User-Id')),
             'inMemory'=>$result = $this->unselectedService->getFromMemory($request->header('User-Id')),

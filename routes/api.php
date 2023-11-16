@@ -20,14 +20,16 @@ Route::get('users', [UserController::class, 'index']);
 Route::get('movies', [MovieController::class, 'index']);
 Route::get('movies/{movie}', [MovieController::class, 'show'])->middleware('movie-found');
 
-// FavoritesController
+
 Route::middleware(['user-auth'])->group(function () {
+    // FavoritesController
     Route::get('favorites', [FavoritesController::class, 'index'])->withoutMiddleware('user-auth');
     Route::post('favorites', [FavoritesController::class, 'store'])->middleware(['favorite-found-store','favorite-exist']);
     Route::delete('favorites/{favorite}', [FavoritesController::class, 'destroy'])->middleware('favorite-found-destroy');
+    // UnselectedController
+    Route::get('/unselected', UnselectedController::class)->middleware('user-auth');
 });
 
 
-// UnselectedController
-Route::get('/unselected', UnselectedController::class)->middleware('user-auth');
+
 
