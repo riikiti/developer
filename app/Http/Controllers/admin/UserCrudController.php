@@ -32,9 +32,10 @@ class UserCrudController extends CrudController
 
     protected function setupListOperation()
     {
-        $this->crud->column('id')->label('ID');
         $this->crud->removeButton('create');
+        $this->crud->column('id')->label('ID');
         $this->crud->column('name')->label('Имя');
+        $this->crud->column('username')->label('Логин');
         $this->crud->column('email')->label('Почта');
     }
 
@@ -45,8 +46,9 @@ class UserCrudController extends CrudController
 
     protected function setupCreateOperation()
     {
-        CRUD::setValidation(UserRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
+        $this->crud->field('name')->label('Наименование');
+        $this->crud->field('username')->label('Логин');
+        $this->crud->field('email')->label('Почта');
     }
 
 
