@@ -13,7 +13,7 @@ Route::middleware(['user-found', 'user-rule','user-auth'])->group(function () {
     Route::put('users/{user}', [UserController::class, 'update']);
     Route::delete('users/{user}', [UserController::class, 'destroy']);
 });
-Route::post('users', [UserController::class, 'store'])->withoutMiddleware('user-auth');
+Route::post('users', [UserController::class, 'store']);
 Route::get('users', [UserController::class, 'index']);
 
 // MovieController
