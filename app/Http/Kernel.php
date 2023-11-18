@@ -8,6 +8,7 @@ use App\Http\Middleware\api\favorite\FavoriteFoundStore;
 use App\Http\Middleware\api\favorite\FavoriteRule;
 use App\Http\Middleware\api\movie\MovieFound;
 use App\Http\Middleware\api\user\UserAutorization;
+use App\Http\Middleware\api\user\UserBanned;
 use App\Http\Middleware\api\user\UserFound;
 use App\Http\Middleware\api\user\UserRule;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
@@ -52,6 +53,7 @@ class Kernel extends HttpKernel
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class . ':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            UserBanned::class,
         ],
 
     ];

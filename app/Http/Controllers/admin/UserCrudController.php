@@ -37,6 +37,7 @@ class UserCrudController extends CrudController
         $this->crud->column('name')->label('Имя');
         $this->crud->column('username')->label('Логин');
         $this->crud->column('email')->label('Почта');
+        $this->crud->column('banned')->label('Статус бана');
     }
 
     protected function setupShowOperation()
@@ -49,6 +50,7 @@ class UserCrudController extends CrudController
         $this->crud->field('name')->label('Наименование');
         $this->crud->field('username')->label('Логин');
         $this->crud->field('email')->label('Почта');
+        $this->crud->field('banned')->label('Статус бана');
     }
 
 
